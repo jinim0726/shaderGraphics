@@ -1,7 +1,6 @@
 /.vs 
 /.64
-/simplegame/x64 
-/simplegame/xvs
+/simplegame/x64
 *.exe 
 *.ilk 
 *.pdb 
