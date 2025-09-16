@@ -19,6 +19,8 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 
 	//Load shaders
 	m_SolidRectShader = CompileShaders("./Shaders/SolidRect.vs", "./Shaders/SolidRect.fs");
+
+	m_TestShader = CompileShaders("./Shaders/test.vs", "./Shaders/test.fs");
 	
 	//Create VBOs
 	CreateVertexBufferObjects();
@@ -47,13 +49,20 @@ void Renderer::CreateVertexBufferObjects()
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBORect);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(rect), rect, GL_STATIC_DRAW);
 
+	float temp = 0.5f;
+	float size = 0.1f;
+
 	//lecture2
 	float testPos[]
 		=
 	{
-		0.f, 0.f, 0.f,
-		1.f, 0.f, 0.f,
-		1.f, 1.f, 1.f, //Triangle1
+		(0.f - temp) * size, (0.f - temp) * size, 0.f,
+		(1.f - temp) * size, (0.f - temp) * size, 0.f,
+		(1.f - temp) * size, (1.f - temp) * size, 1.f, //Triangle1
+
+		(0.f - temp) * size, (0.f - temp) * size, 0.f,
+		(1.f - temp) * size, (1.f - temp) * size, 0.f,
+		(0.f - temp) * size, (1.f - temp) * size, 0.f, //Triangle2
 	};
 
 	glGenBuffers(1, &m_VBOTestPos);
@@ -65,7 +74,11 @@ void Renderer::CreateVertexBufferObjects()
 	{
 		1.f, 0.f, 0.f, 1.f,
 		0.f, 1.f, 0.f, 1.f,
-		0.f, 0.f, 1.f, 1.f//Triangle1
+		0.f, 0.f, 1.f, 1.f, //Triangle1
+
+		1.f, 0.f, 0.f, 1.f,
+		0.f, 1.f, 0.f, 1.f,
+		0.f, 0.f, 1.f, 1.f, //Triangle1
 	};
 
 	glGenBuffers(1, &m_VBOTestColor);
@@ -218,24 +231,24 @@ void Renderer::DrawSolidRect(float x, float y, float z, float size, float r, flo
 void Renderer::DrawTest()
 {
 	//Program select
-	glUseProgram(m_SolidRectShader);
-	glUniform4f(glGetUniformLocation(m_SolidRectShader, "u_Trans"), 0, 0, 0, 1);
-	glUniform4f(glGetUniformLocation(m_SolidRectShader, "u_Color"), 1, 1, 1, 1);
-	int attribPosition = glGetAttribLocation(m_SolidRectShader, "a_Position");
+	glUseProgram(m_TestShader);
+	int attribPosition = glGetAttribLocation(m_TestShader, "a_Position");
 	glEnableVertexAttribArray(attribPosition);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTestPos);
 	glVertexAttribPointer(
 		attribPosition, 3, GL_FLOAT,
 		GL_FALSE, sizeof(float) * 3, 0);
 
-	int attribColor = glGetAttribLocation(m_SolidRectShader, "a_Color");
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	int attribColor = glGetAttribLocation(m_TestShader, "a_Color");
 	glEnableVertexAttribArray(attribColor);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTestColor);
 	glVertexAttribPointer(
 		attribColor, 4, GL_FLOAT,
 		GL_FALSE, sizeof(float) * 4, 0);
 
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glDisableVertexAttribArray(attribPosition);
 	glDisableVertexAttribArray(attribColor);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
