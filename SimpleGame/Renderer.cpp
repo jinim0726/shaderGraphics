@@ -230,18 +230,23 @@ void Renderer::DrawSolidRect(float x, float y, float z, float size, float r, flo
 
 void Renderer::DrawTest()
 {
+	m_time += 0.01f;
+
 	//Program select
 	glUseProgram(m_TestShader);
+
+	int u_TimeLoc = glGetUniformLocation(m_TestShader, "u_Time");
+	glUniform1f(u_TimeLoc, m_time);
+
 	int attribPosition = glGetAttribLocation(m_TestShader, "a_Position");
+	int attribColor = glGetAttribLocation(m_TestShader, "a_Color");
+
 	glEnableVertexAttribArray(attribPosition);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTestPos);
 	glVertexAttribPointer(
 		attribPosition, 3, GL_FLOAT,
 		GL_FALSE, sizeof(float) * 3, 0);
 
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-	int attribColor = glGetAttribLocation(m_TestShader, "a_Color");
 	glEnableVertexAttribArray(attribColor);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTestColor);
 	glVertexAttribPointer(
