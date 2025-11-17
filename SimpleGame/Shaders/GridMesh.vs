@@ -3,6 +3,7 @@
 in vec3 a_Position;
 
 out vec4 v_Color;
+out vec2 v_UV;
 
 uniform float u_Time;
 
@@ -26,6 +27,7 @@ void Flag()
 	gl_Position = newPosition;
 
 	v_Color = vec4(newColor);
+	v_UV = vec2(a_Position.x + 0.5, 0.5 - a.Position.y);
 }
 
 void Wave()
@@ -86,20 +88,7 @@ void RainDrop()
 
 void main()
 {
-	//Flag();
+	Flag();
 	//Wave();
-	rainDrop();
+	//rainDrop();
 }
-
-/*if(d < 0.5)
-	{
-		newColor = 1;
-	}
-	else
-	{
-		newColor = 0;
-	}*/
-
-	/*float value = 0.5 - d;
-	value - clamp(value, 0, 1);
-	value = ceil(value);*/

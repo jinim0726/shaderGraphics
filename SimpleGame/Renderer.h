@@ -4,8 +4,10 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <cassert>
 
 #include "Dependencies\glew.h"
+#include "LoadPng.h"
 
 class Renderer
 {
@@ -20,6 +22,8 @@ public:
 	void DrawParticle();
 	void DrawGridMesh();
 	void DrawFullScreenColor(float r, float g, float b, float a);
+	void DrawFS(float r, float g, float b, float a);
+	GLuint CreatePngTexture(char* filePath, GLuint samplingMethod);
 
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
@@ -63,5 +67,12 @@ private:
 	GLuint m_VBOFullScreen = 0;
 	GLuint m_FullScreenShader = 0;
 	float m_Points[400] = {};
+
+	// FS
+	GLuint m_VBOFS= 0;
+	GLuint m_FSShader = 0;
+
+	// Textures
+	GLuint m_RGBTexture0 = 0;
 };
 

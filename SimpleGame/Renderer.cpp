@@ -28,12 +28,14 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 
 	GenerateParticles(10000);
 
+	m_RGBTexture0 = CreatePngTexture("./rgb.png", GL_NEAREST);
+
 	if (m_SolidRectShader > 0 && m_VBORect > 0)
-	{
+	{	
 		m_Initialized = true;
 	}
 
-	// 1021 Fill Points
+	// Full Points	
 	int index = 0;
 	for (int i = 0; i < 400; i++)
 	{
@@ -59,6 +61,8 @@ void Renderer::CompileAllShaderPrograms() {
 	m_GridMeshShader = CompileShaders("./Shaders/GridMesh.vs", "./Shaders/GridMesh.fs");
 
 	m_FullScreenShader = CompileShaders("./Shaders/FullScreen.vs", "./Shaders/FullScreen.fs");
+
+	m_FSShader = CompileShaders("./Shaders/FS.vs", "./Shaders/FS.fs");
 }
 
 void Renderer::DeleteAllShaderPrograms() {
@@ -67,6 +71,7 @@ void Renderer::DeleteAllShaderPrograms() {
 	glDeleteShader(m_ParticleShader);
 	glDeleteShader(m_GridMeshShader);
 	glDeleteShader(m_FullScreenShader);
+	glDeleteShader(m_FSShader);
 }
 
 bool Renderer::IsInitialized()
@@ -657,6 +662,11 @@ void Renderer::DrawGridMesh()
 	int attribPosition = glGetAttribLocation(shader, "a_Position");
 	glEnableVertexAttribArray(attribPosition);
 
+	int uTextureLoc = glGetUniformLocation(shader, "u_Texture");
+	glUniform1i(uTextureLoc, 0); //Texture unit 0	
+
+	glBindTexture(GL_TEXTURE_2D, m_RGBTexture0);
+
 	glBindBuffer(GL_ARRAY_BUFFER, m_GridMeshVBO);
 	glVertexAttribPointer(attribPosition, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 
@@ -691,4 +701,63 @@ void Renderer::DrawFullScreenColor(float r, float g, float b, float a)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glDisable(GL_BLEND);
+}
+
+void Renderer::DrawFS(float r, float g, float b, float a)
+{
+	m_time += 0.0005f;
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	int shader = m_FSShader;
+
+	//Program select
+	glUseProgram(shader);
+
+	int uTimeLoc = glGetUniformLocation(shader, "u_Time");
+	glUniform1f(uTimeLoc, m_time);
+
+	int uTextureLoc = glGetUniformLocation(shader, "u_RGBTexture");	
+	glUniform1i(uTextureLoc, 0); //Texture unit 0	
+
+	glBindTexture(GL_TEXTURE_2D, m_RGBTexture0);
+
+	int attribPosition = glGetAttribLocation(shader, "a_Position");
+	glEnableVertexAttribArray(attribPosition);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOFS);
+	glVertexAttribPointer(attribPosition, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glDisableVertexAttribArray(attribPosition);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glDisable(GL_BLEND);
+}
+
+GLuint Renderer::CreatePngTexture(char* filePath, GLuint samplingMethod)
+{
+	//Load Png
+	std::vector<unsigned char> image;
+	unsigned width, height;
+	unsigned error = lodepng::decode(image, width, height, filePath);
+	if (error != 0)
+	{
+		std::cout << "PNG image loading failed:" << filePath << std::endl;
+		assert(0);
+	}
+
+	GLuint temp;
+	glGenTextures(1, &temp);
+	glBindTexture(GL_TEXTURE_2D, temp);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
+		GL_UNSIGNED_BYTE, &image[0]);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, samplingMethod);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, samplingMethod);
+
+	return temp;
 }
