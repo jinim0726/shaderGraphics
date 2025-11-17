@@ -32,6 +32,20 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	{
 		m_Initialized = true;
 	}
+
+	// 1021 Fill Points
+	int index = 0;
+	for (int i = 0; i < 400; i++)
+	{
+		float x = 2 * ((float)rand() / (float)RAND_MAX) - 1;
+		float y = 2 * ((float)rand() / (float)RAND_MAX) - 1;
+		float st = 10 * ((float)rand() / (float)RAND_MAX);
+		float lt = ((float)rand() / (float)RAND_MAX);
+		m_Points[index] = x; index++;
+		m_Points[index] = y; index++;
+		m_Points[index] = st; index++;
+		m_Points[index] = lt; index++;
+	}
 }
 
 void Renderer::CompileAllShaderPrograms() {
