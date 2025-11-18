@@ -22,7 +22,7 @@ public:
 	void DrawParticle();
 	void DrawGridMesh();
 	void DrawFullScreenColor(float r, float g, float b, float a);
-	void DrawFS(float r, float g, float b, float a);
+	void DrawFS();
 	GLuint CreatePngTexture(char* filePath, GLuint samplingMethod);
 
 private:
@@ -66,7 +66,7 @@ private:
 	// Full Screen
 	GLuint m_VBOFullScreen = 0;
 	GLuint m_FullScreenShader = 0;
-	float m_Points[400] = {};
+	float m_Points[1600] = {};
 
 	// FS
 	GLuint m_VBOFS= 0;

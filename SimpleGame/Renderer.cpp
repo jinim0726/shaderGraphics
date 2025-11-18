@@ -150,6 +150,17 @@ void Renderer::CreateVertexBufferObjects()
 	glGenBuffers(1, &m_VBOFullScreen);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBOFullScreen);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(fullRect), fullRect, GL_STATIC_DRAW);
+
+	float fullrectFS[]
+		=
+	{
+		-1.f, -1.f, 0.f, 1.f, 1.f, 0.f, -1.f, 1.f, 0.f, //Triangle1
+		-1.f, -1.f, 0.f, 1.f, -1.f, 0.f, 1.f, 1.f, 0.f, //Triangle2
+	};
+
+	glGenBuffers(1, &m_VBOFS);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOFS);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(fullrectFS), fullrectFS, GL_STATIC_DRAW);
 }
 
 void Renderer::AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
@@ -703,7 +714,7 @@ void Renderer::DrawFullScreenColor(float r, float g, float b, float a)
 	glDisable(GL_BLEND);
 }
 
-void Renderer::DrawFS(float r, float g, float b, float a)
+void Renderer::DrawFS()
 {
 	m_time += 0.0005f;
 

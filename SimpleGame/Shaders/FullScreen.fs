@@ -2,9 +2,7 @@
 
 layout(location=0) out vec4 FragColor;
 
-int vec2 v_UV;
-
-uniform sampler2D u_RGBTexture;
+in vec2 v_UV;
 
 uniform vec4 u_Color;
 
